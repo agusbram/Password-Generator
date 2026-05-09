@@ -17,8 +17,8 @@ const activeTab = ref<Tab>('password')
         Passphrase
       </button>
     </div>
-    <PasswordGenerator v-show="activeTab === 'password'" />
-    <PassphraseGenerator v-show="activeTab === 'passphrase'" />
+    <PasswordGenerator v-if="activeTab === 'password'" />
+    <PassphraseGenerator v-if="activeTab === 'passphrase'" />
   </div>
 </template>
 

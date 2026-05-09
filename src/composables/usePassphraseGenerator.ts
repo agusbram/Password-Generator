@@ -10,7 +10,7 @@ const MAX_HISTORY = 10
 export function usePassphraseGenerator() {
   const passphrase = ref('')
   const copied = ref(false)
-  const history = useLocalStorage<string[]>('pwdgen-passphrase-history', [])
+  const history = ref<string[]>([])
 
   const options = useLocalStorage<PassphraseOptions>('pwdgen-passphrase-options', {
     wordCount: 4,
