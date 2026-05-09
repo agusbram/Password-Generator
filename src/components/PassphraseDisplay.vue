@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import StrengthMeter from './StrengthMeter.vue'
+
 defineProps<{
   passphrase: string
   copied: boolean
+  entropyBits: number
 }>()
 
 const emit = defineEmits<{
@@ -15,6 +18,7 @@ const emit = defineEmits<{
     <div class="passphrase-box">
       <span class="passphrase-text">{{ passphrase || '—' }}</span>
     </div>
+    <StrengthMeter v-if="passphrase" :bits="entropyBits" />
     <div class="actions">
       <button class="btn btn-copy" :disabled="!passphrase" @click="$emit('copy')">
         {{ copied ? '¡Copiado!' : 'Copiar' }}
@@ -28,7 +32,7 @@ const emit = defineEmits<{
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .passphrase-box {

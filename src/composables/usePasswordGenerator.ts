@@ -1,22 +1,35 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useLocalStorage } from '@vueuse/core'
 import { generatePassword } from '../utils/password'
 import type { PasswordOptions } from '../utils/password'
+import { getCharsetSize, calcPasswordEntropy } from '../utils/entropy'
+
+const MAX_HISTORY = 10
 
 export function usePasswordGenerator() {
   const password = ref('')
   const copied = ref(false)
+  const history = ref<string[]>([])
 
-  const options = ref<PasswordOptions>({
+  const options = useLocalStorage<PasswordOptions>('pwdgen-options', {
     length: 20,
     uppercase: true,
     lowercase: true,
     numbers: true,
     symbols: true,
     excludeAmbiguous: false,
+    noConsecutive: false,
+  })
+
+  const entropyBits = computed(() => {
+    const size = getCharsetSize(options.value)
+    return calcPasswordEntropy(size, options.value.length)
   })
 
   function generate() {
-    password.value = generatePassword(options.value)
+    const pwd = generatePassword(options.value)
+    password.value = pwd
+    history.value = [pwd, ...history.value].slice(0, MAX_HISTORY)
   }
 
   async function copy() {
@@ -30,7 +43,11 @@ export function usePasswordGenerator() {
     }
   }
 
+  function clearHistory() {
+    history.value = []
+  }
+
   generate()
 
-  return { password, copied, options, generate, copy }
+  return { password, copied, options, entropyBits, history, generate, copy, clearHistory }
 }

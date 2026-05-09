@@ -42,6 +42,10 @@ function update<K extends keyof PasswordOptions>(key: K, value: PasswordOptions[
       <input type="checkbox" :checked="options.excludeAmbiguous" @change="update('excludeAmbiguous', ($event.target as HTMLInputElement).checked)" />
       Excluir ambiguos (oO0, l1I, |)
     </label>
+    <label class="checkbox-label">
+      <input type="checkbox" :checked="options.noConsecutive" @change="update('noConsecutive', ($event.target as HTMLInputElement).checked)" />
+      Evitar repeticiones consecutivas
+    </label>
     <div class="length-row">
       <label for="length">Longitud: {{ options.length }}</label>
       <input id="length" type="range" min="4" max="128" :value="options.length" @input="update('length', Number(($event.target as HTMLInputElement).value))" />
