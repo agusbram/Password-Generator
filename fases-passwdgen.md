@@ -27,15 +27,7 @@
   - Checkboxes para incluir/excluir: mayúsculas, minúsculas, números, símbolos, excluir ambiguos.
   - Slider o input numérico para longitud.
 
-## Fase 3 — Características extendidas de generación (números + especiales + longitud + solo mayúsculas/solo minúsculas/mezcla)
-
-- En `usePasswordGenerator`, agregar modos de composición de caracteres:
-  - **Solo mayúsculas**: el charset solo contiene A-Z.
-  - **Solo minúsculas**: el charset solo contiene a-z.
-  - **Mezcla (default)**: usa el charset completo (mayúsculas + minúsculas + números + símbolos según checkboxes).
-- Agregar un grupo de radio buttons o un select en `PasswordOptions.vue` para elegir el modo.
-- Mantener la opción de incluir números y especiales habilitada para los modos que lo permitan.
-- La longitud siempre debe ser configurable en todos los modos.
+## Fase 3 — ~~Características extendidas de generación~~ *(saltada — los checkboxes ya lo cubren)*
 
 ## Fase 4 — Generador de passphrase (palabras random del diccionario)
 
@@ -74,19 +66,56 @@
 - Botón toggle en el header con ícono de sol/luna (usar emojis o SVG inline).
 - Persistir preferencia en `localStorage`.
 
+## Fase 7 — Indicador de fortaleza + entropía
+
+- Calcular bits de entropía de la contraseña generada.
+- Fórmula contraseña: `log2(tamaño_charset) * longitud`.
+- Fórmula passphrase: `log2(tamaño_diccionario) * cantidad_palabras`.
+- Mostrar barra de fortaleza con colores: rojo (muy débil), naranja (débil), amarillo (media), verde (fuerte), verde oscuro (muy fuerte).
+- Clasificación: <20 bits = muy débil, 20-39 = débil, 40-59 = media, 60-79 = fuerte, ≥80 = muy fuerte.
+- Actualizar en tiempo real al cambiar opciones.
+- Componente reutilizable `StrengthMeter.vue`.
+
+## Fase 8 — Historial de contraseñas en sesión
+
+- Guardar últimas 10 contraseñas generadas en un array persistido con `useLocalStorage`.
+- Mostrarlas en una lista debajo del generador actual.
+- Cada entrada con botón "Copiar" individual.
+- Botón "Limpiar historial".
+- Componente `HistoryList.vue`.
+- Los componentes se mantienen montados al cambiar de pestaña (`v-show` en vez de `v-if`).
+- Usar flag `initial` en los composables para no duplicar la primera generación en el historial al recargar.
+
+## Fase 9 — Preferencias persistentes
+
+- Guardar opciones del generador en `localStorage` con `useLocalStorage` de `@vueuse/core`.
+- Restaurar al recargar la página: longitud, checkboxes, exclusión de ambiguos, sin repeticiones, cantidad de palabras, capitalizar.
+- Claves: `pwdgen-options` y `pwdgen-passphrase-options`.
+
+## Fase 10 — Evitar caracteres repetidos consecutivos
+
+- Opción en checkboxes: "Evitar repeticiones consecutivas".
+- Al generar, asegurar que ningún carácter se repita seguido (ej: evitar `aa`, `11`, `!!`).
+- Si el charset tiene un solo carácter, se genera igual (no hay alternativa).
+
 ---
 
-## Árbol de componentes (propuesto)
+## Árbol de componentes
 
 ```
 App.vue
-├── Header.vue (título + toggle de tema)
-├── PasswordGenerator.vue (pestaña/sección 1)
-│   ├── PasswordOptions.vue
-│   └── PasswordDisplay.vue
-├── PassphraseGenerator.vue (pestaña/sección 2)
-│   ├── PassphraseOptions.vue
-│   └── PassphraseDisplay.vue
+├── Header.vue (título + toggle de tema 🌙/☀️)
+├── HomeView.vue (tabs: Contraseña | Passphrase)
+│   ├── PasswordGenerator.vue
+│   │   ├── PasswordDisplay.vue
+│   │   │   └── StrengthMeter.vue
+│   │   ├── PasswordOptions.vue
+│   │   └── HistoryList.vue
+│   └── PassphraseGenerator.vue
+│       ├── PassphraseDisplay.vue
+│       │   └── StrengthMeter.vue
+│       ├── PassphraseOptions.vue
+│       └── HistoryList.vue
 ```
 
 ## Stack técnico
@@ -96,7 +125,7 @@ App.vue
 | Vue 3 | Composition API + `<script setup>` |
 | Vite | Última estable |
 | TypeScript | Tipado estricto |
-| @vueuse/core | `useDark`, `useClipboard`, `useToggle` |
+| @vueuse/core | `useDark`, `useToggle`, `useLocalStorage` |
 | GitHub Actions | Deploy automático a `gh-pages` |
 
 ## Verificación
