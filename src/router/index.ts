@@ -1,9 +1,9 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
-import PasswordGenerator from '../components/PasswordGenerator.vue'
+import HomeView from '../views/HomeView.vue'
 
 const routes: RouteRecordRaw[] = [
-  { path: '/', component: PasswordGenerator },
+  { path: '/', component: HomeView },
 ]
 
 export default createRouter({
