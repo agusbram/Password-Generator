@@ -1,11 +1,10 @@
 <script setup lang="ts">
+import Header from './components/Header.vue'
 </script>
 
 <template>
   <div id="app">
-    <header>
-      <h1>Password Generator</h1>
-    </header>
+    <Header />
     <main>
       <router-view />
     </main>
