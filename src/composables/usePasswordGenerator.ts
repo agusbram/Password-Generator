@@ -9,7 +9,8 @@ const MAX_HISTORY = 10
 export function usePasswordGenerator() {
   const password = ref('')
   const copied = ref(false)
-  const history = ref<string[]>([])
+  const history = useLocalStorage<string[]>('pwdgen-password-history', [])
+  let initial = true
 
   const options = useLocalStorage<PasswordOptions>('pwdgen-options', {
     length: 20,
@@ -29,6 +30,7 @@ export function usePasswordGenerator() {
   function generate() {
     const pwd = generatePassword(options.value)
     password.value = pwd
+    if (initial) { initial = false; return }
     history.value = [pwd, ...history.value].slice(0, MAX_HISTORY)
   }
 
